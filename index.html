@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>quickDraw</title>
+    <link href="http://at.alicdn.com/t/font_2951528_ov03zmfu83.css" rel="stylesheet" type="text/css">
+    <link href="./style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <main>
+        <div class="tools-container">
+
+            <!-- 选择工具_________________________________________ -->
+            <div class="sparator"></div>
+            <div class="btn singleSelectTool"><i class="iconfont icon-xuanzegongju"></i></div>
+            <div class="btn mutilSelectTool"><i class="iconfont icon-juxingxuanze"></i></div>
+            <!-- 绘图工具________________________________ -->
+            <div class="sparator"></div>
+            <div class="btn brushTool"><i class="iconfont icon-huabi"></i></div>
+            <div class="btn rectTool"><i class="iconfont icon-juxing"></i></div>
+            <div class="btn circleTool"><i class="iconfont icon-xingzhuang-tuoyuanxing"></i></div>
+            <div class="btn tranTool"><i class="iconfont icon-xingzhuang-sanjiaoxing"></i></div>
+            <div class="btn curveTool"><i class="iconfont icon-beiziquxian"></i></div>
+            <div class="btn textTool"><i class="iconfont icon-wenzigongju"></i></div>
+
+            <!-- 颜色_____________________________________ -->
+            <div class="sparator"></div>
+            <div class="colors-container">
+                <div class="color-container">
+                    <input type="color" value="#2680eb" id="fill-color" />
+                </div>
+                <div class="color-container">
+                    <input type="color" value="#2680eb" id="stroke-color" />
+                    <!-- <input type="color" value="#2680eb" id="stroke-color" /> -->
+                </div>
+                <input id="stroke-width" type="number" value="1" max="100" min="1" stpe="0.5" />
+            </div>                    
+
+            <!-- 字体_____________________________________________                 -->
+            <div class="sparator"></div>
+            <div class="font-container">
+                <select id="font-family" value="Georgia" >
+                    <option value="Georgia">Georgia</option>
+                    <option value="Gill Sans">Gill Sans</option>
+                    <option value="system-ui">system-ui</option>
+                    <option value="cursive">cursive</option>
+                </select>
+                <input id="font-size" type="number" max="100" value="16" min="1" stpe="1" />
+            </div>
+
+
+
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <script type="module" src="./app.js"></script>
+    </main>
+
+    <!-- <textarea id="textarea"></textarea> -->
+</body>
+</html>
