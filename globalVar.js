@@ -5,12 +5,15 @@ const mutilSelectTool = document.querySelector('.mutilSelectTool');
 const brushTool = document.querySelector('.brushTool');
 const rectTool = document.querySelector('.rectTool');
 const circleTool = document.querySelector('.circleTool');
-const tranTool = document.querySelector('.tranTool');
 const curveTool = document.querySelector('.curveTool');
 const textTool = document.querySelector('.textTool');
+const polygonTool = document.querySelector('.polygonTool');
 const fillColor = document.querySelector('#fill-color');
+const noFillColor = document.querySelector('.no-fill-btn');
+const noStrokeColor = document.querySelector('.no-stroke-btn');
 const strokeColor = document.querySelector('#stroke-color');
 const widthNum = document.querySelector('#stroke-width');
+const polygonNum = document.querySelector('#polygonNumber');
 const fontFamily = document.querySelector('#font-family')
 const fontSize = document.querySelector('#font-size');
 
@@ -20,13 +23,6 @@ let canvasH = window.innerHeight - 4;
 canvas.width = canvasW;;
 canvas.height = canvasH;
 const ctx = canvas.getContext('2d');
-
-const domElements = [singleSelectTool, mutilSelectTool, brushTool, rectTool, tranTool, curveTool, textTool,
-    fillColor, strokeColor, canvas, ctx]
-
-domElements.forEach(x => {
-    x.state = false;
-})
 
 // 当前点击的是哪个btn
 const toolState = {
@@ -67,9 +63,15 @@ const text = {
     node: null
 }
 
+const polygon = {
+    n: 3,
+    r: 0,
+    deg: 0
+}
+
 export {
-    singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, tranTool, curveTool, textTool,
-    fillColor, strokeColor, canvas, ctx, toolState, domElements, widthNum, fontFamily, fontSize,
+    singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, curveTool, textTool, polygonTool,
+    fillColor, noStrokeColor, strokeColor, noFillColor, canvas, ctx, toolState, widthNum, polygonNum, fontFamily, fontSize,
     strokePoints, layers, pos, color,
-    selected, text
+    selected, text, polygon
 };

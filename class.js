@@ -79,8 +79,47 @@ class Text {
         ctx.fillStyle = this.fontColor;
         ctx.font = this.fontSize + "px" + " " + this.fontFamily;
         // ctx.font = "48px serif";
+        //canvas文字，如何换行的问题！
         ctx.fillText(this.context, this.x, this.y, this.maxWidth);
     }
 }
 
-export { Brush, Rect, Circle, Text }
+class Polygon {
+    constructor(n, x1, y1, r, deg, fillColor, strokeColor, strokeWidth) {
+        this.n = n;
+        this.x1 = x1;
+        this.y1 = y1;
+        // this.x2 = x2;
+        // this.y2 = y2;
+        // this.l = l;
+        this.r = r;
+        this.deg = deg;
+        this.fillColor = fillColor;
+        this.strokeColor = strokeColor;
+        this.strokeWidth = strokeWidth;
+    }
+
+    draw() {
+        ctx.beginPath();
+        // let r = ((this.x1 - this.x2) ** 2 + (this.x2 - this.y2) ** 2) ** 0.5;
+        ctx.save();
+        ctx.translate(this.x1, this.y1);
+        // let deg = Math.atan((getPos(e).y - pos.y) / (getPos(e).x - pos.x));
+        ctx.moveTo(this.r * Math.cos(this.deg), this.r * Math.sin(this.deg));
+        ctx.rotate(this.deg);
+        // ctx.moveTo(this.r, 0);
+        for (let i = 0; i < this.n; i++) {
+            ctx.rotate(Math.PI * 2 / this.n);
+            ctx.lineTo(this.r, 0);
+        }
+        ctx.restore();
+        ctx.closePath();
+        ctx.strokeStyle = this.strokeColor;
+        ctx.lineWidth = this.strokeWidth;
+        ctx.fillStyle = this.fillColor;
+        ctx.stroke();
+        ctx.fill();
+    }
+}
+
+export { Brush, Rect, Circle, Text, Polygon }

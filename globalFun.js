@@ -1,10 +1,21 @@
 import {
-    singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, tranTool, curveTool, textTool,
-    fillColor, strokeColor, canvas, ctx, toolState, domElements, widthNum,
+    singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, curveTool, textTool,
+    fillColor, strokeColor, canvas, ctx, toolState, widthNum,
     strokePoints, layers, pos, color,
     selected
 } from './globalVar.js'
 
+//点击时先清楚其他按钮的，再add
+function add(ele, start, stop) {
+    ele.classList.add('toolClicked');
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mouseup', stop);
+}
+function remove(ele, start, stop) {
+    ele.classList.remove('toolClicked');
+    canvas.removeEventListener('mousedown', start);
+    canvas.removeEventListener('mouseup', stop);
+}
 
 function open(tool) {
     // close();
@@ -91,4 +102,4 @@ function getSingleSelected() {
     }
 }
 
-export { open, getPos, clearAll, drawLayers, getSingleSelected }
+export { add, remove, open, getPos, clearAll, drawLayers, getSingleSelected }

@@ -73,7 +73,8 @@ main {
 }
 
 #stroke-width,
-#font-size {
+#font-size,
+#polygonNumber {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -81,7 +82,12 @@ main {
   /* background: transparent; */
   background: #ddd;
   height: 1rem;
-  width: 2rem;
+  width: 2.1rem;
+}
+
+#polygonNumber {
+  width: 1.6rem;
+  /* margin-top: -0.6rem; */
 }
 
 .sparator {
@@ -100,6 +106,28 @@ main {
 
 textarea:focus {
   outline: none;
+  /* border: none; */
+  /* resize: none; */
   border-color: #ddd;
   /* font-size: 1rem; */
 }
+
+/* .no-color-container {
+  width: 2rem;
+  display: flex;
+} */
+.no-color-btn {
+  width: 2rem;
+  height: 1rem;
+  color: red;
+  /* border: 1px solid #ccc; */
+}
+
+/* .hidden {
+  width: 1rem;
+  height: 1rem;
+  background: red;
+  position: relative;
+  left: 0;
+  top: 0;
+} */

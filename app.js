@@ -1,12 +1,12 @@
 import {
-    singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, tranTool, curveTool, textTool,
-    fillColor, strokeColor, canvas, ctx, toolState, domElements, widthNum, fontFamily, fontSize,
+    singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, curveTool, textTool,
+    polygonTool, fillColor, noStrokeColor, strokeColor, noFillColor, canvas, ctx, toolState, widthNum, polygonNum, fontFamily, fontSize,
     strokePoints, layers, pos, color,
-    selected, text
+    selected, text, polygon
 } from './globalVar.js'
 
-import { open, getPos, clearAll, drawLayers, getSingleSelected } from './globalFun.js'
-import { Brush, Rect, Circle, Text } from './class.js'
+import { add, remove, open, getPos, clearAll, drawLayers, getSingleSelected } from './globalFun.js'
+import { Brush, Rect, Circle, Text, Polygon } from './class.js'
 
 // 获取填充颜色，描边颜色，边框粗细
 fillColor.addEventListener('change', (e) => {
@@ -19,23 +19,23 @@ strokeColor.addEventListener('change', (e) => {
 widthNum.addEventListener('change', (e) => {
     color.width = Number(e.target.value);
 })
+polygonNum.addEventListener('change', (e) => {
+    polygon.n = Number(e.target.value);
+})
 fontFamily.addEventListener('change', (e) => {
     text.fontFamily = e.target.value;
 })
 fontSize.addEventListener('change', (e) => {
     text.fontSize = Number(e.target.value);
 })
-
-//点击时先清楚其他按钮的，再add
-function add(ele, start, stop) {
-    ele.classList.add('toolClicked');
-    canvas.addEventListener('mousedown', start);
-    canvas.addEventListener('mouseup', stop);
+noFillColor.onclick = function () {
+    color.fill = "transparent";
+    fillColor.value = "#000000";
+    fillColor.innerHTML = "kk";
 }
-function remove(ele, start, stop) {
-    ele.classList.remove('toolClicked');
-    canvas.removeEventListener('mousedown', start);
-    canvas.removeEventListener('mouseup', stop);
+noStrokeColor.onclick = function () {
+    color.stroke = "transparent";
+    strokeColor.value = "#000000";
 }
 
 //画笔 ————————————————————————————————————————————
@@ -43,6 +43,8 @@ brushTool.onclick = function () {
     remove(singleSelectTool, startSingleSelect, stopSingleSelect);
     remove(rectTool, startRect, stopRect);
     remove(circleTool, startCircle, stopCircle);
+    remove(textTool, startText, stopText);
+    remove(polygonTool, startPolygon, stopPolygon);
     add(brushTool, startBrush, stopBrush);
 }
 
@@ -74,6 +76,8 @@ rectTool.onclick = function () {
     remove(mutilSelectTool, startMutilSelect, stopMutilSelect)
     remove(brushTool, startBrush, stopBrush);
     remove(circleTool, startCircle, stopCircle);
+    remove(textTool, startText, stopText);
+    remove(polygonTool, startPolygon, stopPolygon);
     add(rectTool, startRect, stopRect);
 }
 
@@ -158,6 +162,7 @@ singleSelectTool.onclick = function () {
     remove(brushTool, startBrush, stopBrush);
     remove(rectTool, startRect, stopRect);
     remove(circleTool, startCircle, stopCircle);
+    remove(textTool, startText, stopText);
     add(singleSelectTool, startSingleSelect, stopSingleSelect);
 }
 
@@ -228,6 +233,7 @@ textTool.onclick = function () {
     remove(brushTool, startBrush, stopBrush);
     remove(rectTool, startRect, stopRect);
     remove(circleTool, startCircle, stopCircle);
+    remove(polygonTool, startPolygon, stopPolygon);
     add(textTool, startText, stopText);
 }
 
@@ -267,7 +273,7 @@ function stopText(e) {
     let height = getPos(e).y - pos.y;
 
     width = (width > 100) ? width : 100;
-    height = (height > 36) ? height : 36;
+    height = (height > 40) ? height : 40;
     canvas.removeEventListener('mousemove', drawTextarea)
     clearAll();
     drawLayers();
@@ -285,6 +291,56 @@ function stopText(e) {
     text.node.style.fontFamily = text.fontFamily;
     text.node.style.color = text.fontColor;
 }
+
+
+//多边形——————————————————————————————————————————
+polygonTool.onclick = function () {
+    remove(mutilSelectTool, startMutilSelect, stopMutilSelect)
+    remove(brushTool, startBrush, stopBrush);
+    remove(rectTool, startRect, stopRect);
+    remove(circleTool, startCircle, stopCircle);
+    remove(textTool, startText, stopText);
+    add(polygonTool, startPolygon, stopPolygon);
+}
+
+function startPolygon(e) {
+    pos.x = getPos(e).x;
+    pos.y = getPos(e).y;
+    canvas.addEventListener('mousemove', drawPolygon);
+}
+
+function drawPolygon(e) {
+    clearAll();
+    drawLayers();
+    ctx.beginPath()
+    polygon.r = ((getPos(e).x - pos.x) ** 2 + (getPos(e).y - pos.y) ** 2) ** 0.5;
+    ctx.save()
+    ctx.translate(pos.x, pos.y);
+    polygon.deg = Math.atan((getPos(e).y - pos.y) / (getPos(e).x - pos.x));
+    ctx.moveTo(polygon.r * Math.cos(polygon.deg), polygon.r * Math.sin(polygon.deg))
+    ctx.rotate(polygon.deg)
+    for (let i = 0; i < polygon.n; i++) {
+        ctx.rotate(Math.PI * 2 / polygon.n) * i;
+        ctx.lineTo(polygon.r, 0)
+    }
+    ctx.restore()
+    ctx.closePath()
+    ctx.strokeStyle = color.stroke;
+    ctx.lineWidth = color.width;
+    ctx.stroke()
+    ctx.fillStyle = color.fill;
+    ctx.fill()
+}
+
+function stopPolygon(e) {
+    canvas.removeEventListener('mousemove', drawPolygon);
+    layers.push(new Polygon(polygon.n, pos.x, pos.y, polygon.r, polygon.deg, color.fill, color.stroke, color.width));
+}
+
+
+
+
+
 
 
 

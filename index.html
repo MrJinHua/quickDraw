@@ -18,7 +18,10 @@
             <div class="btn brushTool"><i class="iconfont icon-huabi"></i></div>
             <div class="btn rectTool"><i class="iconfont icon-juxing"></i></div>
             <div class="btn circleTool"><i class="iconfont icon-xingzhuang-tuoyuanxing"></i></div>
-            <div class="btn tranTool"><i class="iconfont icon-xingzhuang-sanjiaoxing"></i></div>
+            <div class="btn polygonTool">
+                <i class="iconfont icon-xingzhuang-sanjiaoxing"></i>
+            </div>
+            <input id="polygonNumber" type="number" value="3" max="99" min="3" stpe="1" />
             <div class="btn curveTool"><i class="iconfont icon-beiziquxian"></i></div>
             <div class="btn textTool"><i class="iconfont icon-wenzigongju"></i></div>
 
@@ -27,11 +30,13 @@
             <div class="colors-container">
                 <div class="color-container">
                     <input type="color" value="#2680eb" id="fill-color" />
+                    <div class="hidden"></div>
                 </div>
+                <button class="no-color-btn no-fill-btn">/</button>
                 <div class="color-container">
                     <input type="color" value="#2680eb" id="stroke-color" />
-                    <!-- <input type="color" value="#2680eb" id="stroke-color" /> -->
                 </div>
+                <button class="no-color-btn no-stroke-btn">/</button>
                 <input id="stroke-width" type="number" value="1" max="100" min="1" stpe="0.5" />
             </div>                    
 
