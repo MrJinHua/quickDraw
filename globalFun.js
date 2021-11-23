@@ -1,9 +1,11 @@
 import {
-    singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, curveTool, textTool,
-    fillColor, strokeColor, canvas, ctx, toolState, widthNum,
+    singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, curveTool, textTool, polygonTool,
+    fillColor, noStrokeColor, strokeColor, noFillColor, canvas, ctx, toolState, widthNum, polygonNum, fontFamily, fontSize,
     strokePoints, layers, pos, color,
-    selected
+    selected, text, polygon
 } from './globalVar.js'
+
+import { Brush, Rect, Circle, Text, Polygon } from './class.js'
 
 //点击时先清楚其他按钮的，再add
 function add(ele, start, stop) {
@@ -53,6 +55,18 @@ function drawLayers() {
     })
 }
 
+function removeTextarea() {
+    if (text.node && text.node.parentNode) {
+        text.context = text.node.value;
+        text.node.parentNode.removeChild(text.node);
+        if (text.context) {
+            let newText = new Text(text.context, text.fontSize, text.fontColor, text.fontFamily, text.x, text.y);
+            layers.push(newText)
+        }
+    }
+    drawLayers()
+}
+
 
 // 根据每个item的构造函数来确定其是个什么图形
 // 整个具体图形，确实其是否被选中
@@ -63,11 +77,7 @@ function getSingleSelected() {
         if (item.constructor.name === "Rect") {
             if (item.x < pos.x && item.x + item.width > pos.x && item.y < pos.y && item.y + item.height > pos.y) {
                 selected.item = item;
-                selected.preStrokeColor = item.strokeColor;
-                selected.preStrokeWidth = item.strokeWidth;
-                item.strokeColor = selected.borderColor;
-                item.strokeWidth = selected.borderWidth;
-                return;
+                return true;
             }
             // return;
         }
@@ -76,11 +86,7 @@ function getSingleSelected() {
             let dis = ((item.x - pos.x) ** 2 + (item.y - pos.y) ** 2) ** 0.5;
             if ((dis <= item.r)) {
                 selected.item = item;
-                selected.preStrokeColor = item.strokeColor;
-                selected.preStrokeWidth = item.strokeWidth;
-                item.strokeColor = selected.borderColor;
-                item.strokeWidth = selected.borderWidth;
-                return;
+                return true;
             }
         }
 
@@ -98,8 +104,28 @@ function getSingleSelected() {
             }
         }
 
+        if (item.constructor.name === "Polygon") {
+            let dis = ((item.x - pos.x) ** 2 + (item.y - pos.y) ** 2) ** 0.5;
+            if ((dis <= item.r)) {
+                selected.item = item;
+                return true;
+            }
+        }
+
+        if (item.constructor.name === "Text") {
+            let x1 = item.x,
+                y1 = item.y - Number(item.fontSize),
+                x2 = item.x + item.context.length * Number(item.fontSize),
+                y2 = item.y;
+
+            if (x1 < pos.x && x2 > pos.x && y1 < pos.y && y2 > pos.y) {
+                selected.item = item;
+                return true;
+            }
+        }
+
 
     }
 }
 
-export { add, remove, open, getPos, clearAll, drawLayers, getSingleSelected }
+export { add, remove, open, getPos, clearAll, drawLayers, removeTextarea, getSingleSelected };

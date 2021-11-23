@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>quickDraw</title>
-    <link href="http://at.alicdn.com/t/font_2951528_ov03zmfu83.css" rel="stylesheet" type="text/css">
+    <link href="http://at.alicdn.com/t/font_2951528_8ahgtkltpay.css" rel="stylesheet" type="text/css">
     <link href="./style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -30,7 +30,7 @@
             <div class="colors-container">
                 <div class="color-container">
                     <input type="color" value="#2680eb" id="fill-color" />
-                    <div class="hidden"></div>
+                    <!-- <div class="hidden"></div> -->
                 </div>
                 <button class="no-color-btn no-fill-btn">/</button>
                 <div class="color-container">
@@ -52,10 +52,48 @@
                 <input id="font-size" type="number" max="100" value="16" min="1" stpe="1" />
             </div>
 
+            <!-- 分布—————————————————————————————————— -->
+            <div class="sparator"></div>
+            <div class="distribution-container">
+                <div class="vertical-tool">
+                    <button class="distribution-item top-align"><i class="iconfont icon-chuizhidingduiqi"></i></button>
+                    <button class="distribution-item bottom-align"><i class="iconfont icon-chuizhididuiqi"></i></button>
+                    <button class="distribution-item vertical-dis"><i class="iconfont icon-chuizhijuzhongduiqi"></i></button>
+                    <button class="distribution-item vertival-align"><i class="iconfont icon-chuizhidengjufenbu"></i></button>
+                </div>
+                <div class="horizen-tool">
+                    <button class="distribution-item top-align"><i class="iconfont icon-shuipingzuoduiqi"></i></button>
+                    <button class="distribution-item bottom-align"><i class="iconfont icon-shuipingyouduiqi"></i></button>
+                    <button class="distribution-item vertical-dis"><i class="iconfont icon-shuipingjuzhongduiqi"></i></button>
+                    <button class="distribution-item vertival-align"><i class="iconfont icon-shuipingdengjufenbu"></i></button>
+                </div>
+            </div>
 
+            <!-- 图层—————————————————————————————————— -->
+            <div class="sparator"></div>
+            <div class="layers-container">
+                    <div class="layer-tool">
+                        <button class="layer-top"><i class="iconfont icon-dingceng"></i></button>
+                        <button class="layer-up"><i class="iconfont icon-paixujiantoushang"></i></button>
+                    </div>
+                    <div class="layer-tool layer-display">
+                        <div><i class="iconfont icon-layer"></i></div>
+                        <span class="layer-number">23</span>
+                    </div>
+                    <div class="layer-tool">
+                        <button class="layer-bottom"><i class="iconfont icon-diceng"></i></button>
+                        <button class="layer-down"><i class="iconfont icon-paixujiantouxia"></i></button>
+                    </div>  
+            </div>
 
+            <!-- 图层—————————————————————————————————— -->
+            <div class="sparator"></div>
+            <div class="about">
+                <a href="#">quick draw</a>
+            </div>
         </div>
 
+        
         <div class="canvas-container">
             <canvas id="canvas"></canvas>
         </div>

@@ -85,10 +85,10 @@ class Text {
 }
 
 class Polygon {
-    constructor(n, x1, y1, r, deg, fillColor, strokeColor, strokeWidth) {
+    constructor(n, x, y, r, deg, fillColor, strokeColor, strokeWidth) {
         this.n = n;
-        this.x1 = x1;
-        this.y1 = y1;
+        this.x = x;
+        this.y = y;
         // this.x2 = x2;
         // this.y2 = y2;
         // this.l = l;
@@ -101,9 +101,9 @@ class Polygon {
 
     draw() {
         ctx.beginPath();
-        // let r = ((this.x1 - this.x2) ** 2 + (this.x2 - this.y2) ** 2) ** 0.5;
+        // let r = ((this.x - this.x2) ** 2 + (this.x2 - this.y2) ** 2) ** 0.5;
         ctx.save();
-        ctx.translate(this.x1, this.y1);
+        ctx.translate(this.x, this.y);
         // let deg = Math.atan((getPos(e).y - pos.y) / (getPos(e).x - pos.x));
         ctx.moveTo(this.r * Math.cos(this.deg), this.r * Math.sin(this.deg));
         ctx.rotate(this.deg);
@@ -122,4 +122,49 @@ class Polygon {
     }
 }
 
-export { Brush, Rect, Circle, Text, Polygon }
+class Control {
+    constructor(x1, y1, x2, y2) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.x = (this.x1 + this.x2) / 2;
+        this.y = (this.y1 + this.y2) / 2;
+    }
+
+    draw() {
+        let color = "purple";
+        ctx.beginPath();
+        ctx.moveTo(this.x1, this.y1);
+        ctx.lineTo(this.x2, this.y1);
+        ctx.lineTo(this.x2, this.y2);
+        ctx.lineTo(this.x1, this.y2);
+        ctx.closePath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 0.5;
+        ctx.stroke()
+
+        ctx.fillStyle = color;
+        ctx.beginPath()
+        ctx.arc(this.x1, this.y1, 3, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath()
+        ctx.arc(this.x2, this.y1, 3, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath()
+        ctx.arc(this.x2, this.y2, 3, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath()
+        ctx.arc(this.x1, this.y2, 3, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+
+}
+
+
+export { Brush, Rect, Circle, Text, Polygon, Control }

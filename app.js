@@ -5,8 +5,8 @@ import {
     selected, text, polygon
 } from './globalVar.js'
 
-import { add, remove, open, getPos, clearAll, drawLayers, getSingleSelected } from './globalFun.js'
-import { Brush, Rect, Circle, Text, Polygon } from './class.js'
+import { add, remove, open, getPos, clearAll, drawLayers, removeTextarea, getSingleSelected } from './globalFun.js'
+import { Brush, Rect, Circle, Text, Polygon, Control } from './class.js'
 
 // 获取填充颜色，描边颜色，边框粗细
 fillColor.addEventListener('change', (e) => {
@@ -40,7 +40,9 @@ noStrokeColor.onclick = function () {
 
 //画笔 ————————————————————————————————————————————
 brushTool.onclick = function () {
+    removeTextarea();
     remove(singleSelectTool, startSingleSelect, stopSingleSelect);
+    remove(mutilSelectTool, startMutilSelect, stopMutilSelect);
     remove(rectTool, startRect, stopRect);
     remove(circleTool, startCircle, stopCircle);
     remove(textTool, startText, stopText);
@@ -66,14 +68,14 @@ function drawBrush(e) {
 function stopBrush() {
     canvas.removeEventListener('mousemove', drawBrush);
     layers.push(new Brush([...strokePoints], color.width, color.fill))
-    console.log(layers)
     strokePoints.length = 0;
 }
 
 // 矩形——————————————————————————————————————————————————
 rectTool.onclick = function () {
+    removeTextarea();
     remove(singleSelectTool, startSingleSelect, stopSingleSelect);
-    remove(mutilSelectTool, startMutilSelect, stopMutilSelect)
+    remove(mutilSelectTool, startMutilSelect, stopMutilSelect);
     remove(brushTool, startBrush, stopBrush);
     remove(circleTool, startCircle, stopCircle);
     remove(textTool, startText, stopText);
@@ -103,27 +105,20 @@ function drawRect(e) {
 function stopRect() {
     canvas.removeEventListener('mousemove', drawRect);
     let newRect = new Rect(pos.x, pos.y, rectWidth, rectHeight, color.fill, color.stroke, color.width)
-    layers.push(newRect)
+    layers.push(newRect);
 }
 
 
 // 圆形——————————————————————————————————
 circleTool.onclick = function () {
-    if (text.node) {
-        text.context = text.node.value;
-        text.node.parentNode.removeChild(text.node);
-        if (text.context) {
-            let newText = new Text(text.context, text.fontSize, text.fontColor, text.fontFamily, text.x, text.y);
-            layers.push(newText)
-        }
-    }
-
-    clearAll();
-    drawLayers();
+    // clearAll();
+    // drawLayers();
+    removeTextarea();
     remove(singleSelectTool, startSingleSelect, stopSingleSelect);
     remove(mutilSelectTool, startMutilSelect, stopMutilSelect)
     remove(brushTool, startBrush, stopBrush);
     remove(rectTool, startRect, stopRect);
+    remove(polygonTool, startPolygon, stopPolygon);
     remove(textTool, startText, stopText)
 
     add(circleTool, startCircle, stopCircle);
@@ -158,10 +153,12 @@ function stopCircle() {
 
 // 单选工具——————————————————————————————————————
 singleSelectTool.onclick = function () {
-    remove(mutilSelectTool, startMutilSelect, stopMutilSelect)
+    removeTextarea();
+    remove(mutilSelectTool, startMutilSelect, stopMutilSelect);
     remove(brushTool, startBrush, stopBrush);
     remove(rectTool, startRect, stopRect);
     remove(circleTool, startCircle, stopCircle);
+    remove(polygonTool, startPolygon, stopPolygon);
     remove(textTool, startText, stopText);
     add(singleSelectTool, startSingleSelect, stopSingleSelect);
 }
@@ -170,36 +167,82 @@ function startSingleSelect(e) {
     pos.x = getPos(e).x;
     pos.y = getPos(e).y;
     //判断选中的函数
-    getSingleSelected();
     canvas.addEventListener('mousemove', move)
 }
 
+// let con;
+const controler = {
+    x1: 0,
+    y1: 0,
+    x2: 0,
+    y2: 0
+}
+
 function move(e) {
-    clearAll();
-    if (selected.item === "Brush") {
-        item.pos.forEach(point => {
-            point.x = point.x + getPos(e).x - pos.x;
-            point.y = point.y + getPos(e).y - pos.y;
-        })
-    } else {
-        selected.item.x = selected.item.x + getPos(e).x - pos.x;
-        selected.item.y = selected.item.y + getPos(e).y - pos.y;
-    }
-    pos.x = getPos(e).x;
-    pos.y = getPos(e).y;
-    drawLayers()
+    if (getSingleSelected()) {
+        clearAll();
+        //绘制选中的提示框，不加入layers中，只是临时的
+        const shape = selected.item;
+        if (shape === "Brush") {
+            item.pos.forEach(point => {
+                point.x = point.x + getPos(e).x - pos.x;
+                point.y = point.y + getPos(e).y - pos.y;
+            })
+        } else if (shape.constructor.name === "Rect") {
+            shape.x = shape.x + getPos(e).x - pos.x;
+            shape.y = shape.y + getPos(e).y - pos.y;
+            controler.x1 = shape.x;
+            controler.y1 = shape.y;
+            controler.x2 = controler.x1 + shape.width;
+            controler.y2 = controler.y1 + shape.height;
+        } else if (shape.constructor.name === "Circle" || shape.constructor.name === "Polygon") {
+            shape.x = shape.x + getPos(e).x - pos.x;
+            shape.y = shape.y + getPos(e).y - pos.y;
+            controler.x1 = shape.x - shape.r;
+            controler.y1 = shape.y - shape.r;
+            controler.x2 = shape.x + shape.r;
+            controler.y2 = shape.y + shape.r;
+        } else if (shape.constructor.name === "Text") {
+            console.log(678)
+            shape.x = shape.x + getPos(e).x - pos.x;
+            shape.y = shape.y + getPos(e).y - pos.y;
+            controler.x1 = shape.x
+            controler.y1 = shape.y - Number(shape.fontSize);
+            controler.x2 = shape.x + shape.context.length * Number(shape.fontSize);
+            controler.y2 = shape.y;
+        }
+        new Control(controler.x1, controler.y1, controler.x2, controler.y2).draw()
+
+        // controler.x1 = selected.item.x;
+        // controler.y1 = selected.item.y;
+        // controler.x2 = controler.x1 + selected.item.width;
+        // controler.y2 = controler.y1 + selected.item.height;
+        // controler.x1 = selected.item.x1;
+        // controler.y1 = selected.item.y1;
+        // controler.x2 = selected.item.x2;
+        // controler.y2 = selected.item.y2;
+
+
+        pos.x = getPos(e).x;
+        pos.y = getPos(e).y;
+        drawLayers()
+    };
 }
 
 function stopSingleSelect() {
     canvas.removeEventListener('mousemove', move)
+    // layers.push(new Control(controler.x1, controler.y1, controler.x2, controler.y2));
 }
 
 // 多选————————————————————————————————————————————————
 mutilSelectTool.onclick = function () {
+    removeTextarea()
     remove(singleSelectTool, startSingleSelect, stopSingleSelect);
     remove(brushTool, startBrush, stopBrush);
     remove(rectTool, startRect, stopRect);
     remove(circleTool, startCircle, stopCircle);
+    remove(polygonTool, startPolygon, stopPolygon);
+    remove(textTool, startText, stopText);
     add(mutilSelectTool, startMutilSelect, stopMutilSelect);
 }
 
@@ -229,6 +272,7 @@ function stopMutilSelect() {
 
 // 文字工具————————————————————————————————————
 textTool.onclick = function () {
+    remove(singleSelectTool, startSingleSelect, stopSingleSelect);
     remove(mutilSelectTool, startMutilSelect, stopMutilSelect)
     remove(brushTool, startBrush, stopBrush);
     remove(rectTool, startRect, stopRect);
@@ -238,7 +282,9 @@ textTool.onclick = function () {
 }
 
 function startText(e) {
-    if (text.node) {
+    pos.x = getPos(e).x;
+    pos.y = getPos(e).y;
+    if (text.node && text.node.parentNode) {
         text.context = text.node.value;
         text.node.parentNode.removeChild(text.node);
         if (text.context) {
@@ -246,8 +292,6 @@ function startText(e) {
             layers.push(newText)
         }
     }
-    pos.x = getPos(e).x;
-    pos.y = getPos(e).y;
     canvas.addEventListener('mousemove', drawTextarea);
 }
 
@@ -295,6 +339,8 @@ function stopText(e) {
 
 //多边形——————————————————————————————————————————
 polygonTool.onclick = function () {
+    removeTextarea()
+    remove(singleSelectTool, startSingleSelect, stopSingleSelect);
     remove(mutilSelectTool, startMutilSelect, stopMutilSelect)
     remove(brushTool, startBrush, stopBrush);
     remove(rectTool, startRect, stopRect);

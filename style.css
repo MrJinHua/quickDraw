@@ -93,7 +93,7 @@ main {
 .sparator {
   width: 2rem;
   height: 0.5px;
-  margin: 1rem 0;
+  margin: 0.5rem 0;
   background: rgba(0, 0, 0, 0.5);
 }
 
@@ -131,3 +131,62 @@ textarea:focus {
   left: 0;
   top: 0;
 } */
+
+#font-family {
+  width: 2rem;
+  font-size: 0.1rem;
+}
+
+.distribution-container {
+  width: 2rem;
+  display: flex;
+}
+.distribution-container button {
+  border-width: 0.5px;
+  /* border: 1px solid rgba(0, 0, 0, 0.2); */
+  background: none;
+}
+.distribution-container .iconfont {
+  font-size: 0.6rem;
+  /* background: red; */
+}
+
+.vertical-tool,
+.horizen-tool {
+  width: 1rem;
+}
+
+.layers-container {
+  width: 2rem;
+}
+
+.layer-tool {
+  width: 2rem;
+  display: flex;
+  /* justify-content: center; */
+  /* align-items: center; */
+}
+
+.layer-tool button {
+  width: 1rem;
+  border-width: 0.5px;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layer-tool .iconfont {
+  font-size: 0.6rem;
+}
+
+.layer-display {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.layer-number {
+  font-size: 0.6rem;
+  line-height: 26px;
+  color: #ddd;
+}
