@@ -23,6 +23,27 @@ class Brush {
     }
 }
 
+class Line {
+    constructor(x1, y1, x2, y2, color, strokeWidth) {
+        this.x1 = x1;
+        this.x2 = x2;
+        this.y1 = y1;
+        this.y2 = y2;
+        this.color = color;
+        this.strokeWidth = strokeWidth;
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.lineCap = 'round';
+        ctx.moveTo(this.x1, this.y1);
+        ctx.lineTo(this.x2, this.y2);
+        ctx.lineWidth = this.strokeWidth;
+        ctx.strokeStyle = this.color;
+        ctx.stroke();
+    }
+}
+
 class Rect {
     constructor(x, y, width, height, fillColor, strokeColor, strokeWidth) {
         this.x = x;
@@ -123,13 +144,14 @@ class Polygon {
 }
 
 class Control {
-    constructor(x1, y1, x2, y2) {
+    constructor(x1, y1, x2, y2, link) {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
         this.x = (this.x1 + this.x2) / 2;
         this.y = (this.y1 + this.y2) / 2;
+        this.layers = link;
     }
 
     draw() {
@@ -167,4 +189,4 @@ class Control {
 }
 
 
-export { Brush, Rect, Circle, Text, Polygon, Control }
+export { Brush, Line, Rect, Circle, Text, Polygon, Control }

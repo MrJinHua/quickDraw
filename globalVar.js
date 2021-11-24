@@ -3,6 +3,7 @@
 const singleSelectTool = document.querySelector('.singleSelectTool');
 const mutilSelectTool = document.querySelector('.mutilSelectTool');
 const brushTool = document.querySelector('.brushTool');
+const lineTool = document.querySelector('.lineTool');
 const rectTool = document.querySelector('.rectTool');
 const circleTool = document.querySelector('.circleTool');
 const curveTool = document.querySelector('.curveTool');
@@ -16,6 +17,11 @@ const widthNum = document.querySelector('#stroke-width');
 const polygonNum = document.querySelector('#polygonNumber');
 const fontFamily = document.querySelector('#font-family')
 const fontSize = document.querySelector('#font-size');
+const layersNumber = document.querySelector('.layer-number');
+const up = document.querySelector('.layer-up');
+const down = document.querySelector('.layer-down');
+const top = document.querySelector('.layer-top');
+const bottom = document.querySelector('.layer-bottom');
 
 const canvas = document.querySelector('#canvas');
 let canvasW = window.innerWidth - canvas.offsetLeft;
@@ -37,6 +43,7 @@ const toolState = {
 
 const strokePoints = [];
 const layers = [];
+const selectedLayers = [];
 const pos = { x: 0, y: 0 };
 const color = { fill: fillColor.value, stroke: strokeColor.value, width: 1 }
 const selected = {
@@ -47,6 +54,7 @@ const selected = {
     //border为选中是的提示框
     borderColor: 'red',
     borderWidth: 1,
+    control: null
 
 }
 
@@ -70,8 +78,8 @@ const polygon = {
 }
 
 export {
-    singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, curveTool, textTool, polygonTool,
+    singleSelectTool, mutilSelectTool, brushTool, lineTool, rectTool, circleTool, curveTool, textTool, polygonTool,
     fillColor, noStrokeColor, strokeColor, noFillColor, canvas, ctx, toolState, widthNum, polygonNum, fontFamily, fontSize,
-    strokePoints, layers, pos, color,
-    selected, text, polygon
+    strokePoints, layers, selectedLayers, pos, color,
+    selected, text, polygon, layersNumber, up, down, top, bottom
 };
