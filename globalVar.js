@@ -44,6 +44,9 @@ const toolState = {
 const strokePoints = [];
 const layers = [];
 const selectedLayers = [];
+//多选中
+const multiSelected = [];
+const area = { x1: 0, y1: 0, x2: 0, y2: 0 };
 const pos = { x: 0, y: 0 };
 const color = { fill: fillColor.value, stroke: strokeColor.value, width: 1 }
 const selected = {
@@ -55,7 +58,6 @@ const selected = {
     borderColor: 'red',
     borderWidth: 1,
     control: null
-
 }
 
 const text = {
@@ -80,6 +82,6 @@ const polygon = {
 export {
     singleSelectTool, mutilSelectTool, brushTool, lineTool, rectTool, circleTool, curveTool, textTool, polygonTool,
     fillColor, noStrokeColor, strokeColor, noFillColor, canvas, ctx, toolState, widthNum, polygonNum, fontFamily, fontSize,
-    strokePoints, layers, selectedLayers, pos, color,
+    strokePoints, layers, selectedLayers, multiSelected, area, pos, color,
     selected, text, polygon, layersNumber, up, down, top, bottom
 };

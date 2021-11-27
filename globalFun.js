@@ -1,7 +1,7 @@
 import {
     singleSelectTool, mutilSelectTool, brushTool, rectTool, circleTool, curveTool, textTool, polygonTool,
     fillColor, noStrokeColor, strokeColor, noFillColor, canvas, ctx, toolState, widthNum, polygonNum, fontFamily, fontSize,
-    strokePoints, layers, selectedLayers, pos, color,
+    strokePoints, layers, selectedLayers, multiSelected, area, pos, color,
     selected, text, polygon, layersNumber, up, down, top, bottom
 } from './globalVar.js'
 
@@ -53,7 +53,7 @@ function drawLayers() {
     layers.forEach(item => {
         item.draw();
     })
-    layersNumber.textContent = layers.length + 1;
+    // layersNumber.textContent = layers.length + 1;
 }
 
 function removeTextarea() {
@@ -77,8 +77,10 @@ function removeControler() {
 // 根据每个item的构造函数来确定其是个什么图形
 // 整个具体图形，确实其是否被选中
 function getSingleSelected() {
-    for (let i = 0; i < layers.length; i++) {
+    for (let i = layers.length - 1; i >= 0; i--) {
         let item = layers[i];
+        // for (let i = 0; i < layers.length; i++) {
+        //     let item = layers[i];
 
         if (item.constructor.name === "Rect") {
             if (item.x < pos.x && item.x + item.width > pos.x && item.y < pos.y && item.y + item.height > pos.y) {
@@ -154,6 +156,23 @@ function getSingleSelected() {
     }
 }
 
+function getMultiSelected() {
+    let areax1 = area.x1, areax2 = area.x2, areay1 = area.y1, areay2 = area.y2;
+    layers.forEach(item => {
+        function checkSelected(x1, y1, x2, y2) {
+            if (x1 > areax1 && x2 > areax1 && x1 < areax2 && x2 < areax2 &&
+                y1 > areay1 && y2 > areay1 && y1 < areay2 && y2 < areay2) {
+                multiSelected.push(item);
+                area.x1 = 0; area.x2 = 0; area.y1 = 0; area.y2 = 0;
+                return true;
+            }
+        }
+        if (item.constructor.name === "Rect") {
+            checkSelected(item.x, item.y, item.x + item.width, item.y + item.height)
+        }
+    })
+}
+
 function getControl() {
     for (let i = 0; i < selectedLayers.length; i++) {
         let item = selectedLayers[i];
@@ -178,4 +197,4 @@ function getControl() {
     }
 }
 
-export { add, remove, open, getPos, clearAll, drawLayers, removeTextarea, getSingleSelected, getControl };
+export { add, remove, open, getPos, clearAll, drawLayers, removeTextarea, getSingleSelected, getControl, getMultiSelected };

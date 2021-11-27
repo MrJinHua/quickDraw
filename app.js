@@ -1,12 +1,24 @@
 import {
-    singleSelectTool, mutilSelectTool, brushTool, lineTool, rectTool, circleTool, curveTool, textTool,
+    singleSelectTool, mutilSelectTool, area, brushTool, lineTool, rectTool, circleTool, curveTool, textTool,
     polygonTool, fillColor, noStrokeColor, strokeColor, noFillColor, canvas, ctx, toolState, widthNum, polygonNum, fontFamily, fontSize,
     strokePoints, layers, selectedLayers, pos, color,
-    selected, text, polygon, layersNumber, up, down, top, bottom
+    selected, text, polygon, layersNumber, up, down, top, bottom, multiSelected
 } from './globalVar.js'
 
-import { add, remove, open, getPos, clearAll, drawLayers, removeTextarea, getSingleSelected, getControl } from './globalFun.js'
+import {
+    add, remove, open, getPos, clearAll, drawLayers, removeTextarea, getSingleSelected, getControl,
+    getMultiSelected,
+} from './globalFun.js'
 import { Brush, Line, Rect, Circle, Text, Polygon, Control } from './class.js'
+
+//图层的数量
+let layersNumberValue = 0;
+layersNumber.textContent = layersNumberValue;
+
+function displayLayers() {
+    layersNumberValue++;
+    layersNumber.textContent = layersNumberValue;
+}
 
 // 获取填充颜色，描边颜色，边框粗细
 fillColor.addEventListener('change', (e) => {
@@ -78,20 +90,86 @@ noStrokeColor.onclick = function () {
     }
 }
 
-//调整图层顺序
-// up.onclick = function () {
-//     if (selected.item) {
-//         let index = layers.indexOf(selected.item)
-//         if (index > 0) {
-//             let curr = index[index];
-//             layers[index] = layers[index + 1];
-//             layers[index + 1] = curr;
-//         }
-//         clearAll();
-//         drawLayers()
+// 调整图层顺序
+up.onclick = function () {
+    if (selected.item) {
+        let index = layers.indexOf(selected.item);
+        if (index >= 0 && index < layers.length - 1) {
+            let curr = layers[index];
+            layers[index] = layers[index + 1];
+            layers[index + 1] = curr;
+            clearAll();
+            drawLayers();
+        }
+        console.log(layers, index);
+    }
+}
 
-//     }
-// }
+down.onclick = function () {
+    if (selected.item) {
+        let index = layers.indexOf(selected.item);
+        if (index > 0 && index < layers.length) {
+            let curr = layers[index];
+            layers[index] = layers[index - 1];
+            layers[index - 1] = curr;
+            clearAll();
+            drawLayers();
+        }
+    }
+}
+
+
+top.onclick = function () {
+    if (selected.item) {
+        let index = layers.indexOf(selected.item);
+        let curr = layers[index];
+        if (index >= 0 && index < layers.length - 1) {
+            for (let i = index; i < layers.length - 1; i++) {
+                layers[i] = layers[i + 1];
+            }
+            layers[layers.length - 1] = curr;
+            clearAll();
+            drawLayers();
+        }
+    }
+}
+
+bottom.onclick = function () {
+    if (selected.item) {
+        let index = layers.indexOf(selected.item);
+        let curr = layers[index];
+        if (index > 0 && index < layers.length) {
+            for (let i = index; i > 0; i--) {
+                layers[i] = layers[i - 1];
+            }
+            layers[0] = curr;
+            clearAll();
+            drawLayers();
+        }
+    }
+}
+
+document.querySelector('.top-align').onclick = function () {
+    const arr = multiSelected.map(item => item.y)
+    const minY = Math.min(...arr);
+    multiSelected.forEach(item => {
+        item.y = minY;
+    })
+
+    clearAll();
+    drawLayers();
+}
+document.querySelector('.bottom-align').onclick = function () {
+    const arr = multiSelected.map(item => item.y + item.height)
+    const maxY = Math.max(...arr);
+    multiSelected.forEach(item => {
+        item.y = maxY - item.height;
+    })
+
+    clearAll();
+    drawLayers();
+}
+
 
 //画笔 ————————————————————————————————————————————
 brushTool.onclick = function () {
@@ -107,18 +185,14 @@ brushTool.onclick = function () {
 }
 
 function startBrush(e) {
-
     pos.x = getPos(e).x;
     pos.y = getPos(e).y;
-
     ctx.beginPath()
     ctx.moveTo(pos.x, pos.y);
-
     canvas.addEventListener('mousemove', drawBrush);
 }
 
 function drawBrush(e) {
-
     strokePoints.push({ x: getPos(e).x, y: getPos(e).y })
     ctx.lineTo(getPos(e).x, getPos(e).y);
     ctx.strokeStyle = color.fill;
@@ -126,14 +200,17 @@ function drawBrush(e) {
     ctx.lineCap = 'round';
     ctx.stroke();
 
+
 }
 
 function stopBrush() {
     canvas.removeEventListener('mousemove', drawBrush);
+    displayLayers();
     layers.push(new Brush([...strokePoints], color.width, color.fill))
     strokePoints.length = 0;
     clearAll();
     drawLayers();
+    console.log(layers)
 }
 
 //直线————————————————————————————————————————————
@@ -164,6 +241,7 @@ function drawLine(e) {
 
 function stopLine(e) {
     canvas.removeEventListener('mousemove', drawLine);
+    displayLayers();
     layers.push(new Line(pos.x, pos.y, getPos(e).x, getPos(e).y, color.fill, color.width));
 }
 
@@ -201,8 +279,10 @@ function drawRect(e) {
 
 function stopRect() {
     canvas.removeEventListener('mousemove', drawRect);
+    displayLayers();
     let newRect = new Rect(pos.x, pos.y, rectWidth, rectHeight, color.fill, color.stroke, color.width)
     layers.push(newRect);
+    console.log(layers)
 }
 
 
@@ -244,6 +324,7 @@ function drawCircle(e) {
 
 function stopCircle() {
     canvas.removeEventListener('mousemove', drawCircle);
+    displayLayers();
     let newCircle = new Circle(pos.x, pos.y, ridus, color.fill, color.stroke, color.width);
     layers.push(newCircle);
     console.log(layers)
@@ -285,6 +366,8 @@ function move(e) {
         clearAll();
         //绘制选中的提示框，不加入layers中，只是临时的
         const shape = selected.item;
+        drawLayers()
+
         if (shape.constructor.name === "Brush") {
             // console.log(minX, maxX, minY, maxY)
             shape.pos.forEach(point => {
@@ -331,7 +414,6 @@ function move(e) {
 
         pos.x = getPos(e).x;
         pos.y = getPos(e).y;
-        drawLayers()
     };
 }
 
@@ -352,7 +434,6 @@ mutilSelectTool.onclick = function () {
     add(mutilSelectTool, startMutilSelect, stopMutilSelect);
 }
 
-const area = { x1: 0, y1: 0, x2: 0, y2: 0 };
 function startMutilSelect(e) {
     area.x1 = getPos(e).x;
     area.y1 = getPos(e).y;
@@ -366,14 +447,14 @@ function selectArea(e) {
     area.y2 = getPos(e).y;
     ctx.strokeStyle = selected.borderColor;
     ctx.strokeRect(area.x1, area.y1, (area.x2 - area.x1), (area.y2 - area.y1));
-
-
 }
 
 function stopMutilSelect() {
+    getMultiSelected();
     canvas.removeEventListener('mousemove', selectArea)
     clearAll();
     drawLayers();
+    // console.log(multiSelected);
 }
 
 // 文字工具————————————————————————————————————
@@ -466,7 +547,7 @@ function startPolygon(e) {
 function drawPolygon(e) {
     clearAll();
     drawLayers();
-    ctx.beginPath()
+    ctx.beginPath();
     polygon.r = ((getPos(e).x - pos.x) ** 2 + (getPos(e).y - pos.y) ** 2) ** 0.5;
     ctx.save()
     ctx.translate(pos.x, pos.y);
@@ -488,6 +569,7 @@ function drawPolygon(e) {
 
 function stopPolygon(e) {
     canvas.removeEventListener('mousemove', drawPolygon);
+    displayLayers();
     layers.push(new Polygon(polygon.n, pos.x, pos.y, polygon.r, polygon.deg, color.fill, color.stroke, color.width));
 }
 
